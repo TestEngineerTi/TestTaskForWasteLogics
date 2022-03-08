@@ -1,0 +1,15 @@
+{
+  "company": "TEST CUSTOMER",
+  "grade": "Mixed Municipal Waste",
+  "weight": "0.460 T",
+  "invoiceAddress": {
+    "street": "TEST ADDRESS",
+    "town": "TEST TOWN",
+    "postCode": "111111"
+  },
+  "priceEntity": {
+    "flatCharge": "£100.00",
+    "perTonne": "£4.60",
+    "totalPrice": "110.00"
+  }
+}
