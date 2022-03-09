@@ -1,29 +1,21 @@
 import DataModel.Dataset;
 import Utilites.JsonUtils;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static com.codeborne.selenide.Condition.exactTextCaseSensitive;
+import static java.time.Duration.*;
 
 public class FirstTest extends BaseTest {
 
-    InvoiceAddress invoiceAddress = new InvoiceAddress();
-    PriceEntity priceEntity = new PriceEntity();
+    String expectedAddress = expectedInvoiceAddress.street
+            + ", "
+            + expectedInvoiceAddress.town
+            + ", "
+            + expectedInvoiceAddress.postCode;
 
-    String actualCompanyName = "TEST CUSTOMER";
-    String actualGrade = "Mixed Municipal Waste";
-    String actualWeight = "0.460 T";
+    String orderId = "146566";
 
-    static class InvoiceAddress {
-        String street = "TEST ADDRESS";
-        String town = "TEST TOWN";
-        String postCode = "111111";
-    }
-
-    static class PriceEntity {
-        String flatCharge = "£100.00";
-        String perTonne = "£4.60";
-        String totalPrice = "110.00";
-    }
 
     public FirstTest() {
         super(JsonUtils.readConfigurationResource(
@@ -32,19 +24,29 @@ public class FirstTest extends BaseTest {
     }
 
     @Test
+    @DisplayName("Check that results contains valid data for 146566 record")
     public void firstTest() {
-        assertThat(actualCompanyName).isEqualTo(expectedCompanyName);
+        openSearchPage();
 
-        assertThat(actualGrade).isEqualTo(expectedGrade);
+        invoiceSearch.invoiceAddress(orderId).scrollIntoView(true)
+                .shouldHave(exactTextCaseSensitive(expectedAddress), ofSeconds(5));
 
-        assertThat(actualWeight).isEqualTo(expectedWeight);
+        invoiceSearch.grade(orderId)
+                .shouldHave(exactTextCaseSensitive(expectedGrade), ofSeconds(5));
 
-        assertThat(invoiceAddress.postCode).isEqualTo(expectedInvoiceAddress.postCode);
-        assertThat(invoiceAddress.street).isEqualTo(expectedInvoiceAddress.street);
-        assertThat(invoiceAddress.town).isEqualTo(expectedInvoiceAddress.town);
+        invoiceSearch.company(orderId)
+                .shouldHave(exactTextCaseSensitive(expectedCompanyName), ofSeconds(5));
 
-        assertThat(priceEntity.flatCharge).isEqualTo(expectedPriceEntity.flatCharge);
-        assertThat(priceEntity.perTonne).isEqualTo(expectedPriceEntity.perTonne);
-        assertThat(priceEntity.totalPrice).isEqualTo(expectedPriceEntity.totalPrice);
+        invoiceSearch.weight(orderId)
+                .shouldHave(exactTextCaseSensitive(expectedWeight), ofSeconds(5));
+
+        invoiceSearch.flatChargePrice(orderId)
+                .shouldHave(exactTextCaseSensitive(expectedPriceEntity.flatCharge), ofSeconds(5));
+
+        invoiceSearch.perTonnePrice(orderId)
+                .shouldHave(exactTextCaseSensitive(expectedPriceEntity.perTonne), ofSeconds(5));
+
+        invoiceSearch.itemPrice(orderId)
+                .shouldHave(exactTextCaseSensitive(expectedPriceEntity.totalPrice), ofSeconds(5));
     }
 }
