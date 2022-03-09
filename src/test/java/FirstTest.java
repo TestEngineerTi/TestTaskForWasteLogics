@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static com.codeborne.selenide.Condition.exactTextCaseSensitive;
+import static com.codeborne.selenide.Condition.visible;
 import static java.time.Duration.*;
 
 public class FirstTest extends BaseTest {
@@ -24,11 +25,15 @@ public class FirstTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("Check that results contains valid data for 146566 record")
+    @DisplayName("Check that results page contains valid data for 146566 record")
     public void firstTest() {
         openSearchPage();
 
-        invoiceSearch.invoiceAddress(orderId).scrollIntoView(true)
+        invoiceSearch.invoiceAddress(orderId)
+                .shouldBe(visible, ofSeconds(5))
+                .scrollIntoView(true);
+
+        invoiceSearch.invoiceAddress(orderId)
                 .shouldHave(exactTextCaseSensitive(expectedAddress), ofSeconds(5));
 
         invoiceSearch.grade(orderId)
